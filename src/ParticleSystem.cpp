@@ -174,9 +174,8 @@ bool CParticleSystem::SetTexture( char *chTexFile)
   if( m_chTexFile != NULL )
     strcpy( m_chTexFile, chTexFile );
 
-  if( m_ptexParticle != NULL )
-    m_ptexParticle->Release();
-  m_ptexParticle = NULL;
+  if( m_texture != 0)
+    glDeleteTextures(1, &m_texture);
 
   m_texture = SOIL_load_OGL_texture(m_chTexFile, SOIL_LOAD_RGBA, 0, 0);
 
