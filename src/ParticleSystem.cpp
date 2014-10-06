@@ -266,7 +266,6 @@ bool CParticleSystem::Update( float fElpasedTime )
       // Finally, update position with respect to velocity
       vOldPosition = pParticle->m_vCurPos;
       pParticle->m_vCurPos += pParticle->m_vCurVel * fElpasedTime;
-      std::cout << "hoi " << pParticle->m_vCurPos.x << " " << pParticle->m_vCurPos.y << " " << pParticle->m_vCurPos.z << " " << fElpasedTime << std::endl;
 
       //-----------------------------------------------------------------
       // BEGIN Checking the particle against each plane that was set up
@@ -520,7 +519,6 @@ bool CParticleSystem::Render()
       glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, (const GLfloat*)col.col);
       glMatrixMode(GL_MODELVIEW);
       glPushMatrix();
-      std::cout << particles << " " << "translating by " << pParticle->m_vCurPos.x << " " << pParticle->m_vCurPos.y << " " << pParticle->m_vCurPos.z << std::endl;
       glTranslatef(pParticle->m_vCurPos.x, pParticle->m_vCurPos.y, pParticle->m_vCurPos.z);
       glScalef(m_fSize, m_fSize, m_fSize);
       glBegin(GL_TRIANGLES);
