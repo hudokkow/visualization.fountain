@@ -169,7 +169,6 @@ public:
     bool Render();
 
     bool SetTexture( char *chTexFile);
-    GLuint &GetTextureObject();
 
     void RestartParticleSystem(void);
 
