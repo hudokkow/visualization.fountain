@@ -120,8 +120,6 @@ CParticleSystem::~CParticleSystem()
 
 void CParticleSystem::dtor()
 {
-    InvalidateDeviceObjects();
-
     while( m_pPlanes ) // Repeat till null...
     {
         Plane *pPlane = m_pPlanes;   // Hold onto the first one
@@ -151,8 +149,8 @@ void CParticleSystem::dtor()
 		m_chTexFile = NULL;
 	}
 
-    if( m_ptexParticle != NULL )
-        m_ptexParticle->Release();
+    if( m_texture != NULL )
+      glDeleteTextures(1, &m_texture);
 }
 
 //-----------------------------------------------------------------------------
