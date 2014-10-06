@@ -135,12 +135,9 @@ extern "C" void Start(int iChannels, int iSamplesPerSec, int iBitsPerSample, con
   gTimer.Init();
 }
 
-
-#include <iostream>
 extern "C" void AudioData(const float* pAudioData, int iAudioDataLength, float *pFreqData, int iFreqDataLength)
 {
   ParticleSystemSettings *currSettings = &m_pssSettings[m_iCurrSetting];
-  std::cout << "audiodata fed" << std::endl;
 
   if (iFreqDataLength>FREQ_DATA_SIZE)
     iFreqDataLength = FREQ_DATA_SIZE;
@@ -336,23 +333,23 @@ void SetDefaults(ParticleSystemSettings* settings)
   settings->m_csValue.min			= 0.2f;
   settings->m_csValue.min			= 0.6f;
   settings->m_csValue.shiftRate	= 0.0005f;
-  settings->m_csValue.modifier	= 0.0f;
+  settings->m_csValue.modifier	= 0.3f;
   settings->m_csValue.variation	= 0.3f;
   settings->m_csValue.bar			= 1;
 
-  settings->m_fRotationSpeed			= 0.1f;
-  settings->m_fRotationSensitivity	= 0.02;
+  settings->m_fRotationSpeed			= 0.01f;
+  settings->m_fRotationSensitivity	= 0.15;
   settings->m_iRotationBar			= 0;
 }
 
 void SetDefaults(EffectSettings* settings)
 {
-	settings->bars				= CVector( 1, 1, 1 );
-	settings->bInvert			= false;
-	settings->modifier			= 0.0f;
-	settings->mode				= MODE_BOTH;
-	settings->modificationMode	= MODIFICATION_MODE_LINEAR;
-	settings->vector			= CVector( 0, 0, 0 );
+  settings->bars             = CVector( 1, 1, 1 );
+  settings->bInvert          = false;
+  settings->modifier         = 0.0f;
+  settings->mode             = MODE_BOTH;
+  settings->modificationMode = MODIFICATION_MODE_LINEAR;
+  settings->vector           = CVector( 0, 0, 0 );
 }
 
 void SetupCamera()
