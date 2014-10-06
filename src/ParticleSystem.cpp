@@ -512,7 +512,7 @@ bool CParticleSystem::Render()
       CRGBA col = convertHSV2RGB(pParticle->m_clrColor);
       glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, (const GLfloat*)col.col);
       glLoadIdentity();
-      glTranslate(pParticle->m_vCurPos.x, pParticle->m_vCurPos.y, pParticle->m_vCurPos.z);
+      glTranslatef(pParticle->m_vCurPos.x, pParticle->m_vCurPos.y, pParticle->m_vCurPos.z);
       glScalef(m_fSize, m_fSize, m_fSize);
       glBegin(GL_TRIANGLES);
       for (size_t i=0;i<6;++i)
