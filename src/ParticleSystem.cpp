@@ -506,6 +506,8 @@ bool CParticleSystem::Render()
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, m_texture);
 
+    glMatrixMode(GL_MODELVIEW);
+
     Particle    *pParticle = m_pActiveList;
     while (pParticle)
     {

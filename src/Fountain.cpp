@@ -233,7 +233,6 @@ extern "C" void Render()
 {
   //
   // Set up our view
-  //
   SetupCamera();
   SetupRotation(0.0f, 0.0f, m_fRotation+=m_pssSettings[m_iCurrSetting].m_fRotationSpeed);
   SetupPerspective();
