@@ -252,6 +252,7 @@ extern "C" void Render()
   m_dwCurTime = time(NULL);
   m_fElapsedTime = (m_dwCurTime - m_dwLastTime)/m_fUpdateSpeed;
   m_dwLastTime = m_dwCurTime;
+  std::cout << "fetta di er " << m_fElapsedTime << std::endl;
   m_ParticleSystem.Update( m_fElapsedTime );
 
 
