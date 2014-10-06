@@ -242,7 +242,7 @@ extern "C" void Render()
   SetupRotation(0.0f, 0.0f, m_fRotation);
   glClearColor(0.0, 0.0, 0.0, 1.0);
   glDisable(GL_DEPTH_TEST);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPT_BUFFER_BIT);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   //
   // The particle system will need to know how much time has passed since 
