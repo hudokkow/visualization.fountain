@@ -9,6 +9,7 @@
 #include "ParticleSystem.h"
 #include "Util.h"
 #include <string.h>
+#include <SOIL/SOIL.h>
 
 const int HBAND = 128;
 const int SBAND = 256;
