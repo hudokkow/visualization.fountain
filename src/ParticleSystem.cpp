@@ -83,7 +83,7 @@ void CParticleSystem::ctor()
 	m_fCurrentTime     = 0.0f;
 	m_fLastUpdate      = 0.0f;
     m_chTexFile        = NULL;
-    m_ptexParticle     = NULL;
+    m_texture     = 0;
     m_dwMaxParticles   = 1;
     m_dwNumToRelease   = 1;
     m_fReleaseInterval = 1.0f;
