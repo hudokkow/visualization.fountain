@@ -25,8 +25,6 @@
 #define MAX_CHANNELS 2
 #define MAX_SETTINGS 64
 
-static VIS_INFO		  vInfo;
-
 static CParticleSystem m_ParticleSystem;
 
 static HsvColor m_clrColor;
