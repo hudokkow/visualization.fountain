@@ -229,6 +229,8 @@ extern "C" void GetInfo(VIS_INFO* pInfo)
   pInfo->iSyncDelay = 15;
 }
 
+#include <iostream>
+
 extern "C" void Render()
 {
   //
