@@ -316,7 +316,7 @@ void SetDefaults(ParticleSystemSettings* settings)
   settings->m_esVelocity.vector = CVector(-4, 4, 0);
 
   SetDefaults(&settings->m_esWind);
-  settings->m_esWind.vector = CVector(2, -2, 0);
+  settings->m_esWind.vector = CVector(1.0, -2.0, 0.0);
 
   settings->m_csHue.min		= 0.0f;
   settings->m_csHue.max		= 360.0f;
@@ -341,7 +341,7 @@ void SetDefaults(ParticleSystemSettings* settings)
 
   settings->m_fRotationSpeed			= 0.1f;
   settings->m_fRotationSensitivity	= 0.02;
-  settings->m_iRotationBar			= 1;
+  settings->m_iRotationBar			= 0;
 }
 
 void SetDefaults(EffectSettings* settings)
