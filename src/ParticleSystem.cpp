@@ -82,7 +82,6 @@ void CParticleSystem::ctor()
 	m_dwActiveCount    = 0;
 	m_fCurrentTime     = 0.0f;
 	m_fLastUpdate      = 0.0f;
-    m_pVB              = NULL; // The vertex buffer where point sprites are to be stored
     m_chTexFile        = NULL;
     m_ptexParticle     = NULL;
     m_dwMaxParticles   = 1;
