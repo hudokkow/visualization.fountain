@@ -173,7 +173,7 @@ extern "C" void AudioData(const float* pAudioData, int iAudioDataLength, float *
   //adjust num to release
   if (currSettings->m_fNumToReleaseMod != 0.0f)
   {
-    int numToReleaseBar = min(m_iBars, 10);
+    int numToReleaseBar = std::min(m_iBars, 10);
     float level = (m_pFreq[numToReleaseBar]/(float)MAX_LEVEL);
     int numToRelease = level * currSettings->m_dwNumToRelease;
     int mod = numToRelease * currSettings->m_fNumToReleaseMod;
@@ -394,8 +394,8 @@ void ShiftColor(ParticleSystemSettings* settings)
     m_iHDir *= -1;
   }
 
-  m_clrColor.h = min(m_clrColor.h, hmax);
-  m_clrColor.h = max(m_clrColor.h, hmin);
+  m_clrColor.h = std::min(m_clrColor.h, hmax);
+  m_clrColor.h = std::max(m_clrColor.h, hmin);
 
   m_clrColor.s += sadjust * m_iSDir;
   if ( m_clrColor.s >= smax  || m_clrColor.s <= smin )
@@ -404,8 +404,8 @@ void ShiftColor(ParticleSystemSettings* settings)
     m_iSDir *= -1;
   }
 
-  m_clrColor.s = min(m_clrColor.s, smax);
-  m_clrColor.s = max(m_clrColor.s, smin);
+  m_clrColor.s = std::min(m_clrColor.s, smax);
+  m_clrColor.s = std::max(m_clrColor.s, smin);
 
   m_clrColor.v += vadjust * m_iVDir;
   if ( m_clrColor.v >= vmax  || m_clrColor.v <= vmin )
@@ -414,8 +414,8 @@ void ShiftColor(ParticleSystemSettings* settings)
     m_iVDir *= -1;
   }
 
-  m_clrColor.v = min(m_clrColor.v, vmax);
-  m_clrColor.v = max(m_clrColor.v, vmin);
+  m_clrColor.v = std::min(m_clrColor.v, vmax);
+  m_clrColor.v = std::max(m_clrColor.v, vmin);
 
   float audioh = (m_pFreq[settings->m_csHue.bar] / MAX_LEVEL)			* settings->m_csHue.modifier;
   float audios = (m_pFreq[settings->m_csSaturation.bar] / MAX_LEVEL)	* settings->m_csSaturation.modifier;
@@ -433,14 +433,14 @@ void ShiftColor(ParticleSystemSettings* settings)
   while(v > 1)
     v -= 1;
 
-  h = min(h, hmax);
-  h = max(h, hmin);
+  h = std::min(h, hmax);
+  h = std::max(h, hmin);
 
-  s = min(s, smax);
-  s = max(s, smin);
+  s = std::min(s, smax);
+  s = std::max(s, smin);
 
-  v = min(v, vmax);
-  v = max(v, vmin);
+  v = std::min(v, vmax);
+  v = std::max(v, vmin);
 
   m_ParticleSystem.SetColor( HsvColor(h, s, v) );
 }
@@ -479,9 +479,9 @@ void InitParticleSystem(ParticleSystemSettings settings)
 
 CVector Shift(EffectSettings* settings)
 {
-  int xBand = min(m_iBars, settings->bars.x);
-  int yBand = min(m_iBars, settings->bars.y);
-  int zBand = min(m_iBars, settings->bars.z);
+  int xBand = std::min(m_iBars, settings->bars.x);
+  int yBand = std::min(m_iBars, settings->bars.y);
+  int zBand = std::min(m_iBars, settings->bars.z);
 
   xBand-=1;
   xBand*=2;
