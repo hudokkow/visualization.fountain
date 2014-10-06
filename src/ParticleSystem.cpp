@@ -398,7 +398,7 @@ bool CParticleSystem::Update( float fElpasedTime )
           while (h > 360.0f)	h -= 360.0f;
           while (h < 0)		h += 360.0f;
 
-          h = std::max(m_fMinH, min(m_fMaxH, h));
+          h = std::max(m_fMinH, std::min(m_fMaxH, h));
         }
 
         //modifiy s by m_fSMod
@@ -411,7 +411,7 @@ bool CParticleSystem::Update( float fElpasedTime )
           while (s > 1.0f) s-= 1.0f;
           while (s < 0.0f) s+= 1.0f;
 
-          s = std::max(m_fMinS, min(m_fMaxS, s));
+          s = std::max(m_fMinS, std::min(m_fMaxS, s));
         }
 
         //modifiy v by m_fVMod
@@ -424,7 +424,7 @@ bool CParticleSystem::Update( float fElpasedTime )
           while (v > 1.0f) v-= 1.0f;
           while (v < 1.0f) v+= 1.0f;
 
-          v = std::max(m_fMinV, min(m_fMaxV, v));
+          v = std::max(m_fMinV, std::min(m_fMaxV, v));
         }
 
         pParticle->m_clrColor	= HsvColor(h, s, v);
