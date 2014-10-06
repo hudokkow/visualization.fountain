@@ -506,13 +506,13 @@ bool CParticleSystem::Render()
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, m_texture);
 
-    glMatrixMode(GL_MODELVIEW);
 
     Particle    *pParticle = m_pActiveList;
     while (pParticle)
     {
       CRGBA col = convertHSV2RGB(pParticle->m_clrColor);
       glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, (const GLfloat*)col.col);
+      glMatrixMode(GL_MODELVIEW);
       glPushMatrix();
       glTranslatef(pParticle->m_vCurPos.x, pParticle->m_vCurPos.y, pParticle->m_vCurPos.z);
       glScalef(m_fSize, m_fSize, m_fSize);
