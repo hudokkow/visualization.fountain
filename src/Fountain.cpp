@@ -6,7 +6,7 @@
 #include "Fountain.h"
 #include <math.h>
 #include <stdio.h>
-#include <xbmc/xbmc_viz_dll.h>
+#include <xbmc/xbmc_vis_dll.h>
 
 #define	FREQ_DATA_SIZE 1024			// size of frequency data wanted
 #define MAX_BARS 720				// number of bars in the Spectrum
