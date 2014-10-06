@@ -509,13 +509,15 @@ bool CParticleSystem::Render()
 
 
     Particle    *pParticle = m_pActiveList;
+    int particles=0;
     while (pParticle)
     {
+      ++particles;
       CRGBA col = convertHSV2RGB(pParticle->m_clrColor);
       glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, (const GLfloat*)col.col);
       glMatrixMode(GL_MODELVIEW);
       glPushMatrix();
-      std::cout << "translating by " << pParticle->m_vCurPos.x << " " << pParticle->m_vCurPos.y << " " << pParticle->m_vCurPos.z << std::endl;
+      std::cout << particles << " " << "translating by " << pParticle->m_vCurPos.x << " " << pParticle->m_vCurPos.y << " " << pParticle->m_vCurPos.z << std::endl;
       glTranslatef(pParticle->m_vCurPos.x, pParticle->m_vCurPos.y, pParticle->m_vCurPos.z);
       glScalef(m_fSize, m_fSize, m_fSize);
       glBegin(GL_TRIANGLES);
