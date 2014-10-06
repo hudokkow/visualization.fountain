@@ -11,6 +11,7 @@
 #include <time.h>
 #include <algorithm>
 #include <GL/gl.h>
+#include <GL/glu.h>
 
 #define	FREQ_DATA_SIZE 1024			// size of frequency data wanted
 #define MAX_BARS 720				// number of bars in the Spectrum
@@ -333,18 +334,10 @@ void SetDefaults(EffectSettings* settings)
 
 void SetupCamera()
 {
-    //Here we will setup the camera.
-    //The camera has three settings: "Camera Position", "Look at Position" and "Up Direction"
-    //We have set the following:
-    //Camera Position: (0, 0, -30)
-    //Look at Position: (0, 0, 0)
-    //Up direction: Y-Axis.
-    D3DXMATRIX matView;
-    D3DXMatrixLookAtLH(&matView, &D3DXVECTOR3(0.0f, 0.0f,-30.0f), //Camera Position
-                                 &D3DXVECTOR3(0.0f, 0.0f, 0.0f), //Look At Position
-                                 &D3DXVECTOR3(0.0f, 1.0f, 0.0f)); //Up Direction
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+  gluLookAt(0.0, 0.0, -30.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 
-    m_pd3dDevice->SetTransform(D3DTS_VIEW, &matView);
 }
 
 void SetupPerspective()
