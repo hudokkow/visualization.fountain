@@ -476,6 +476,7 @@ void CParticleSystem::RestartParticleSystem( void )
 //		 the original Render method, so I have heavily rewritten it to not
 //		 user point sprites
 //-----------------------------------------------------------------------------
+#include <iostream>
 bool CParticleSystem::Render()
 {
     struct CUSTOMVERTEX
