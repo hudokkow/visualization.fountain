@@ -236,10 +236,10 @@ extern "C" void Render()
   //
   // Set up our view
   SetupCamera();
+  SetupPerspective();
   m_fRotation+=m_pssSettings[m_iCurrSetting].m_fRotationSpeed;
   std::cout << "rotation at " << m_pssSettings[m_iCurrSetting].m_fRotationSpeed << std::endl;
   SetupRotation(0.0f, 0.0f, m_fRotation);
-  SetupPerspective();
   glClearColor(0.0, 0.0, 0.0, 1.0);
   glClear(GL_COLOR_BUFFER_BIT);
 
@@ -365,7 +365,6 @@ void SetupCamera()
 void SetupPerspective()
 {
   glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
   gluPerspective(45.0, 1.0, 1.0, 100.0);
 }
 
