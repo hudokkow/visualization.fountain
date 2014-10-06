@@ -95,6 +95,10 @@ ADDON_STATUS ADDON_Create(void* hdl, void* props)
   m_iCurrSetting = -1;
   srand(time(NULL));
 
+  m_ParticleSystem.ctor();
+  SetDefaults();
+  m_ParticleSystem.Init();
+
   return ADDON_STATUS_OK;
 }
 
@@ -107,6 +111,8 @@ extern "C" void Start(int iChannels, int iSamplesPerSec, int iBitsPerSample, con
   {
     m_pFreqPrev[i] = 0.0f;
   }
+
+
 
   if (m_bCycleSettings || m_iNumSettings < 3)
     m_iCurrSetting++;
