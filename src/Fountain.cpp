@@ -262,7 +262,7 @@ extern "C" void Render()
 
 void CreateArrays()
 {
-  ZeroMemory(m_pFreq, 1024);
+  memset(m_pFreq, 0, 1024*sizeof(float));
 }
 
 void SetDefaults()
