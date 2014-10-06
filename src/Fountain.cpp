@@ -342,23 +342,18 @@ void SetupCamera()
 
 void SetupPerspective()
 {
-    //Here we specify the field of view, aspect ration and near and far clipping planes.
-    D3DXMATRIX matProj;
-    D3DXMatrixPerspectiveFovLH(&matProj, D3DX_PI/4, 1.0f, 1.0f, 100.0f);
-    m_pd3dDevice->SetTransform(D3DTS_PROJECTION, &matProj);
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  gluPerspective(45.0, 1.0, 1.0, 100.0);
 }
 
 void SetupRotation(float x, float y, float z)
 {
   ////Here we will rotate our view around the x, y and z axis.
-  D3DXMATRIX matView, matRot;
-  m_pd3dDevice->GetTransform(D3DTS_VIEW, &matView);
-
-  D3DXMatrixRotationYawPitchRoll(&matRot, x, y, z); 
-
-  D3DXMatrixMultiply(&matView, &matView, &matRot);
-
-  m_pd3dDevice->SetTransform(D3DTS_VIEW, &matView);
+  glMatrixMode(GL_MODELVIEW);
+  glRotatef(x, 1.0, 0.0, 0.0);
+  glRotatef(y, 0.0, 1.0, 0.0);
+  glRotatef(z, 0.0, 0.0, 1.0);
 }
 
 void ShiftColor(ParticleSystemSettings* settings)
