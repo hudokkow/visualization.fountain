@@ -468,7 +468,7 @@ void InitParticleSystem(ParticleSystemSettings settings)
 
   XBMC->GetSetting("__addonpath__", settings.m_chTexFile);
   strcat(settings.m_chTexFile, "/resources/particle.bmp");
-  m_ParticleSystem.SetTexture( szTexFile);
+  m_ParticleSystem.SetTexture(settings.m_chTexFile);
 }
 
 CVector Shift(EffectSettings* settings)
