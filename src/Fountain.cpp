@@ -372,9 +372,9 @@ void SetupRotation(float x, float y, float z)
 {
   ////Here we will rotate our view around the x, y and z axis.
   glMatrixMode(GL_MODELVIEW);
-  glRotatef(x, 1.0, 0.0, 0.0);
-  glRotatef(y, 0.0, 1.0, 0.0);
-  glRotatef(z, 0.0, 0.0, 1.0);
+  glRotatef(x/M_PI*180, 1.0, 0.0, 0.0);
+  glRotatef(y/M_PI*180, 0.0, 1.0, 0.0);
+  glRotatef(z/M_PI*180, 0.0, 0.0, 1.0);
 }
 
 void ShiftColor(ParticleSystemSettings* settings)
