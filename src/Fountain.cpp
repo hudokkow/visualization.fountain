@@ -219,7 +219,7 @@ extern "C" void Render()
   SetupCamera();
   SetupRotation(0.0f, 0.0f, m_fRotation+=m_pssSettings[m_iCurrSetting].m_fRotationSpeed);
   SetupPerspective();
-  glSetClearColor(0.0, 0.0, 0.0);
+  glClearColor(0.0, 0.0, 0.0);
   glClear(GL_COLOR_BUFFER_BIT);
 
   //
