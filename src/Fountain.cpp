@@ -163,7 +163,7 @@ extern "C" void AudioData(const float* pAudioData, int iAudioDataLength, float *
     m_pFreq[i] = m_fMinLevel;
 
   //if we exceed the rotation sensitivity threshold, reverse our rotation
-  int rotationBar = min(m_iBars, currSettings->m_iRotationBar);
+  int rotationBar = std::min(m_iBars, currSettings->m_iRotationBar);
   if (abs(m_pFreq[rotationBar] - m_pFreqPrev[rotationBar]) > MAX_LEVEL * currSettings->m_fRotationSensitivity)
     currSettings->m_fRotationSpeed*=-1;
 
