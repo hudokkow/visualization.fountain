@@ -64,7 +64,6 @@ void SetDefaults(EffectSettings* settings);
 void ShiftColor(ParticleSystemSettings* settings);
 void CreateArrays();
 
-void SetEffectSettings(EffectSettings* settings, CXmlDocument* doc, XmlNode node);
 CVector Shift(EffectSettings* settings);
 
 inline int RandPosNeg() {
