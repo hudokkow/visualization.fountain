@@ -217,6 +217,8 @@ bool CParticleSystem::Init()
     return true;
 }
 
+#include <iostream>
+
 //-----------------------------------------------------------------------------
 // Name: Update()
 // Desc:
