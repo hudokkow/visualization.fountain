@@ -473,9 +473,9 @@ void InitParticleSystem(ParticleSystemSettings settings)
 
 CVector Shift(EffectSettings* settings)
 {
-  int xBand = std::min(m_iBars, settings->bars.x);
-  int yBand = std::min(m_iBars, settings->bars.y);
-  int zBand = std::min(m_iBars, settings->bars.z);
+  int xBand = std::min(m_iBars, (int)settings->bars.x);
+  int yBand = std::min(m_iBars, (int)settings->bars.y);
+  int zBand = std::min(m_iBars, (int)settings->bars.z);
 
   xBand-=1;
   xBand*=2;
