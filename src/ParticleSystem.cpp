@@ -265,8 +265,8 @@ bool CParticleSystem::Update( float fElpasedTime )
 
       // Finally, update position with respect to velocity
       vOldPosition = pParticle->m_vCurPos;
-      std::cout << "hoi " << pParticle->m_vCurPos.x << " " << pParticle->m_vCurPos.y << " " << pParticle->m_vCurPos.z << std::endl;
       pParticle->m_vCurPos += pParticle->m_vCurVel * fElpasedTime;
+      std::cout << "hoi " << pParticle->m_vCurPos.x << " " << pParticle->m_vCurPos.y << " " << pParticle->m_vCurPos.z << " " << fElpasedTime << std::endl;
 
       //-----------------------------------------------------------------
       // BEGIN Checking the particle against each plane that was set up
