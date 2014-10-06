@@ -7,6 +7,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <xbmc/xbmc_vis_dll.h>
+#include <xbmc/libXBMC_addon.h>
 #include <memory.h>
 #include <time.h>
 #include <algorithm>
@@ -62,7 +63,8 @@ static float	m_fMaxFreq	= MAX_FREQUENCY;
 static float	m_fMinLevel = MIN_LEVEL;
 static float	m_fMaxLevel = MAX_LEVEL;
 
-void LoadSettings();
+ADDON::CHelper_libXBMC_addon *XBMC           = NULL;
+
 void SetDefaults();
 void SetDefaults(ParticleSystemSettings* settings);
 void SetDefaults(EffectSettings* settings);
@@ -79,6 +81,15 @@ ADDON_STATUS ADDON_Create(void* hdl, void* props)
 {
   if (!props)
     return ADDON_STATUS_UNKNOWN;
+
+  if (!XBMC)
+    XBMC = new ADDON::CHelper_libXBMC_addon;
+
+  if (!XBMC->RegisterMe(hdl))
+  {
+    delete XBMC, XBMC=NULL;
+    return ADDON_STATUS_PERMANENT_FAILURE;
+  }
 
   m_clrColor = HsvColor( 360.0f, 1.0f, .06f );
   m_iCurrSetting = -1;
