@@ -238,7 +238,6 @@ extern "C" void Render()
   SetupCamera();
   SetupPerspective();
   m_fRotation+=m_pssSettings[m_iCurrSetting].m_fRotationSpeed;
-  std::cout << "rotation at " << m_pssSettings[m_iCurrSetting].m_fRotationSpeed << std::endl;
   SetupRotation(0.0f, 0.0f, m_fRotation);
   glClearColor(0.0, 0.0, 0.0, 1.0);
   glDisable(GL_DEPTH_TEST);
