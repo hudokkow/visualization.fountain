@@ -589,8 +589,8 @@ HsvColor convertRGB2HSV(const CRGBA& d3dColor)
 void convertRGB2HSV(float r, float g, float b, float *h, float *s, float *v)
 {
   float min, max, delta;
-  min = min( r, g, b );
-  max = max( r, g, b );
+  min = std::min( r, g, b );
+  max = std::max( r, g, b );
   *v = max;				// v
   delta = max - min;
   if( max != 0 )
