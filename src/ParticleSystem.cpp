@@ -187,7 +187,7 @@ bool CParticleSystem::SetTexture( char *chTexFile)
 // Name: SetCollisionPlane()
 // Desc: 
 //-----------------------------------------------------------------------------
-void CParticleSystem::SetCollisionPlane( CVector vPlaneNormal, CVector vPoint, 
+void CParticleSystem::SetCollisionPlane( const CVector& vPlaneNormal, const CVector& vPoint, 
                                          float fBounceFactor, int nCollisionResult )
 {
     Plane *pPlane = (Plane*)malloc(sizeof (Plane));
