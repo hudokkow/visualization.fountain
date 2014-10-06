@@ -252,7 +252,6 @@ extern "C" void Render()
 
   gTimer.Update();
   m_fElapsedTime = gTimer.GetDeltaTime();
-  std::cout << "fetta di er " << m_fElapsedTime << std::endl;
   m_ParticleSystem.Update( m_fElapsedTime );
 
 
@@ -305,7 +304,7 @@ void SetDefaults(ParticleSystemSettings* settings)
   settings->m_fNumToReleaseMod	= 0.0f;
   settings->m_fLifeCycle			= 3.0f;
   settings->m_fReleaseInterval	= 0.0f;
-  settings->m_fSize				= 0.7f;
+  settings->m_fSize				= 0.1f;
   settings->m_fVelocityVar		= 1.5f;
 
   SetDefaults(&settings->m_esGravity);
