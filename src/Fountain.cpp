@@ -275,6 +275,8 @@ extern "C" void Render()
   //
 
   m_ParticleSystem.Render();
+  glDisable(GL_LIGHTING);
+  glDisable(GL_BLEND);
 }
 
 
