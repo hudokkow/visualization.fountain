@@ -365,6 +365,7 @@ void SetupCamera()
 void SetupPerspective()
 {
   glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
   gluPerspective(45.0, 1.0, 1.0, 100.0);
 }
 
