@@ -16,8 +16,7 @@ include_directories(${OpenGL_INCLUDE_DIR}
 
 set(FOUNTAIN_SOURCES src/Fountain.cpp
                      src/ParticleSystem.cpp
-                     src/Util.cpp
-                     src/Visualization.cpp)
+                     src/Util.cpp)
 
 SET(DEPLIBS ${OPENGL_LIBRARIES}
              ${SOIL_LIBRARIES})
