@@ -10,6 +10,7 @@
 #include "Util.h"
 #include <string.h>
 #include <SOIL/SOIL.h>
+#include <algorithm>
 
 const int HBAND = 128;
 const int SBAND = 256;
