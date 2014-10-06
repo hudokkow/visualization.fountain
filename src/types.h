@@ -118,7 +118,7 @@ public:
 
 	friend CVector operator - (const CVector& v1, const CVector& v2)	{   return CVector(v1.x-v2.x, v1.y-v2.y, v1.z-v2.z);	}
 	friend CVector operator + (const CVector& v1, const CVector& v2)	{   return CVector(v1.x+v2.x, v1.y+v2.y, v1.x+v2.x);	}
-	friend CVector operator * (const CVector& v, f32 s)				{   return CVector(s*v.x, s*v.y), s*v.z;	}
+	friend CVector operator * (const CVector& v, f32 s)				{   return CVector(s*v.x, s*v.y, s*v.z);	}
 };
 
 ////////////////////////////////////////////////////////////////////////////
