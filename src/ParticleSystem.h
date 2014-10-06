@@ -83,7 +83,7 @@ void convertHSV2RGB(float h,float s,float v,float *r,float *g,float *b);
 CRGBA convertHSV2RGB(HsvColor hsvColor);
 
 void convertRGB2HSV(float r, float g, float b, float *h, float *s, float *v);
-HsvColor convertRGB2HSV(D3DXCOLOR d3dColor);
+HsvColor convertRGB2HSV(const CRGBA& d3dColor);
 
 //-----------------------------------------------------------------------------
 // CLASSES
@@ -116,17 +116,17 @@ public:
     void SetColor( HsvColor clrColor ) { m_clrColor = clrColor; }
 	HsvColor GetColor( void ) { return m_clrColor; }
 
-	void SetPosition( D3DXVECTOR3 vPosition ) { m_vPosition = vPosition; }
-	D3DXVECTOR3 GetPosition( void ) { return m_vPosition; }
+	void SetPosition( const CVector& vPosition ) { m_vPosition = vPosition; }
+	const CVector& GetPosition( void ) { return m_vPosition; }
 
-    void SetVelocity( D3DXVECTOR3 vVelocity ) { m_vVelocity = vVelocity; }
-	D3DXVECTOR3 GetVelocity( void ) { return m_vVelocity; }
+    void SetVelocity( const CVector& vVelocity ) { m_vVelocity = vVelocity; }
+	const CVector& GetVelocity( void ) { return m_vVelocity; }
 
-    void SetGravity( D3DXVECTOR3 vGravity ) { m_vGravity = vGravity; }
-	D3DXVECTOR3 GetGravity( void ) { return m_vGravity; }
+    void SetGravity( const CVector& vGravity ) { m_vGravity = vGravity; }
+	const CVector& GetGravity( void ) { return m_vGravity; }
 
-    void SetWind( D3DXVECTOR3 vWind ) { m_vWind = vWind; }
-	D3DXVECTOR3 GetWind( void ) { return m_vWind; }
+    void SetWind( const CVector& vWind ) { m_vWind = vWind; }
+	const CVector& GetWind( void ) { return m_vWind; }
 
     void SetAirResistence( bool bAirResistence ) { m_bAirResistence = bAirResistence; }
 	bool GetAirResistence( void ) { return m_bAirResistence; }
@@ -134,7 +134,7 @@ public:
     void SetVelocityVar( float fVelocityVar ) { m_fVelocityVar = fVelocityVar; }
 	float GetVelocityVar( void ) { return m_fVelocityVar; }
 
-    void SetCollisionPlane( D3DXVECTOR3 vPlaneNormal, D3DXVECTOR3 vPoint, 
+    void SetCollisionPlane( const CVector& vPlaneNormal, const CVector& vPoint, 
                             float fBounceFactor = 1.0f, int nCollisionResult = CR_BOUNCE );
 
 	void SetHVar( float fHVar ) { m_fHVar = fHVar; }
