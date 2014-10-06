@@ -10,6 +10,7 @@
 #include <memory.h>
 #include <time.h>
 #include <algorithm>
+#include <GL/gl.h>
 
 #define	FREQ_DATA_SIZE 1024			// size of frequency data wanted
 #define MAX_BARS 720				// number of bars in the Spectrum
@@ -218,7 +219,8 @@ extern "C" void Render()
   SetupCamera();
   SetupRotation(0.0f, 0.0f, m_fRotation+=m_pssSettings[m_iCurrSetting].m_fRotationSpeed);
   SetupPerspective();
-  m_pd3dDevice->Clear(0, NULL, D3DCLEAR_TARGET, 0, 1.0f, NULL);
+  glSetClearColor(0.0, 0.0, 0.0);
+  glClear(GL_COLOR_BUFFER_BIT);
 
   //
   // The particle system will need to know how much time has passed since 
