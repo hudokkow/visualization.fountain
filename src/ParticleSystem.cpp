@@ -478,8 +478,6 @@ void CParticleSystem::RestartParticleSystem( void )
 //-----------------------------------------------------------------------------
 bool CParticleSystem::Render()
 {
-    CUSTOMVERTEX* pVertices;
-
     struct CUSTOMVERTEX
     {
       float x, y, z; // The transformed position for the vertex.
