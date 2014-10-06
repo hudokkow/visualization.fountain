@@ -77,7 +77,7 @@ struct PointVertex
 //-----------------------------------------------------------------------------
 
 // Helper function to stuff a FLOAT into a DWORD argument
-inline int FtoDW( FLOAT f ) { return *((int*)&f); }
+inline int FtoDW( float f ) { return *((int*)&f); }
 
 void convertHSV2RGB(float h,float s,float v,float *r,float *g,float *b);
 CRGBA convertHSV2RGB(HsvColor hsvColor);
