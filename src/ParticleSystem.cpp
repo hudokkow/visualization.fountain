@@ -6,7 +6,7 @@
 //					   (particularly in Render) to work as visualisation
 //-----------------------------------------------------------------------------
 
-#include "particlesystem.h"
+#include "ParticleSystem.h"
 #include "Util.h"
 
 const int HBAND = 128;
