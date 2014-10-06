@@ -146,7 +146,8 @@ extern "C" void AudioData(const float* pAudioData, int iAudioDataLength, float *
 
 
   // Transform data to dB scale, 0 (Quietest possible) to 96 (Loudest)
-  for (int i=0; i < (m_iBars*2); i++)
+  int i;
+  for (i=0; i < (m_iBars*2); i++)
   {
     m_pFreq[i] = 10*log10(m_pFreq[i]);
     if (m_pFreq[i] > MAX_LEVEL)
