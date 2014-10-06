@@ -510,7 +510,7 @@ bool CParticleSystem::Render()
     while (pParticle)
     {
       CRGBA col = convertHSV2RGB(pParticle->m_clrColor);
-      glMaterialfv(GL_EMISSION, (const GLfloat*)col.col);
+      glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, (const GLfloat*)col.col);
       glLoadIdentity();
       glTranslate(pParticle->m_vCurPos.x, pParticlar->m_vCurPos.y, pParticle->m_vCurPos.z);
       glScalef(m_fSize, m_fSize, m_fSize);
