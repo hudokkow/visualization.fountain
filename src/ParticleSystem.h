@@ -6,10 +6,10 @@
 //					   to work as visualisation
 //-----------------------------------------------------------------------------
 
-#include <xtl.h>
-
 #ifndef CPARTICLESYSTEM_H_INCLUDED
 #define CPARTICLESYSTEM_H_INCLUDED
+
+#include "types.h"
 
 //-----------------------------------------------------------------------------
 // SYMBOLIC CONSTANTS
@@ -40,8 +40,8 @@ typedef struct HsvColor
 
 struct Plane
 {
-    D3DXVECTOR3 m_vNormal;           // The plane's normal
-    D3DXVECTOR3 m_vPoint;            // A coplanar point within the plane
+    CVector m_vNormal;           // The plane's normal
+    CVector m_vPoint;            // A coplanar point within the plane
     float       m_fBounceFactor;     // Coefficient of restitution (or how bouncy the plane is)
     int         m_nCollisionResult;  // What will particles do when they strike the plane
 
@@ -50,13 +50,13 @@ struct Plane
 
 struct Particle
 {
-    D3DXVECTOR3 m_vCurPos;    // Current position of particle
-    D3DXVECTOR3 m_vCurVel;    // Current velocity of particle
+    CVector m_vCurPos;    // Current position of particle
+    CVector m_vCurVel;    // Current velocity of particle
     float       m_fInitTime;  // Time of creation of particle
 	HsvColor	m_clrColor;	  // Color of particle
 
-	D3DXVECTOR3 m_vGravity; 
-    D3DXVECTOR3 m_vWind;    
+	CVector m_vGravity; 
+    CVector m_vWind;    
 	float		m_fVelocityVar;
 	float		m_fSize;
 	float		m_fLifeCycle;
@@ -68,13 +68,8 @@ struct Particle
 // Custom vertex and FVF declaration for point sprite vertex points
 struct PointVertex
 {
-    D3DXVECTOR3 posit;
-    D3DCOLOR    color;
-
-	enum FVF
-	{
-		FVF_Flags = D3DFVF_XYZ | D3DFVF_DIFFUSE
-	};
+    CVector posit;
+    CRGBA color;
 };
 
 //-----------------------------------------------------------------------------
@@ -82,10 +77,10 @@ struct PointVertex
 //-----------------------------------------------------------------------------
 
 // Helper function to stuff a FLOAT into a DWORD argument
-inline DWORD FtoDW( FLOAT f ) { return *((DWORD*)&f); }
+inline int FtoDW( FLOAT f ) { return *((int*)&f); }
 
 void convertHSV2RGB(float h,float s,float v,float *r,float *g,float *b);
-D3DXCOLOR convertHSV2RGB(HsvColor hsvColor);
+CRGBA convertHSV2RGB(HsvColor hsvColor);
 
 void convertRGB2HSV(float r, float g, float b, float *h, float *s, float *v);
 HsvColor convertRGB2HSV(D3DXCOLOR d3dColor);
@@ -102,11 +97,11 @@ public:
     CParticleSystem(void);
    ~CParticleSystem(void);
     void dtor();
-    void SetMaxParticles( DWORD dwMaxParticles ) { m_dwMaxParticles = dwMaxParticles; }
-	DWORD GetMaxParticles( void ) { return m_dwMaxParticles; }
+    void SetMaxParticles( int dwMaxParticles ) { m_dwMaxParticles = dwMaxParticles; }
+	int GetMaxParticles( void ) { return m_dwMaxParticles; }
 
-    void SetNumToRelease( DWORD dwNumToRelease ) { m_dwNumToRelease = dwNumToRelease; }
-	DWORD GetNumToRelease( void ) { return m_dwNumToRelease; }
+    void SetNumToRelease( int dwNumToRelease ) { m_dwNumToRelease = dwNumToRelease; }
+	int GetNumToRelease( void ) { return m_dwNumToRelease; }
 
     void SetReleaseInterval( float fReleaseInterval ) { m_fReleaseInterval = fReleaseInterval; }
     float GetReleaseInterval( void ) { return m_fReleaseInterval; }
@@ -169,48 +164,42 @@ public:
 	void SetMinV( float fMinV ) { m_fMinV = fMinV; }
 	float GetMinV( void ) { return m_fMinV; }
 
-	HRESULT Init( LPDIRECT3DDEVICE8 pd3dDevice );
-    HRESULT Update( float fElapsedTime );
-    HRESULT Render( LPDIRECT3DDEVICE8 pd3dDevice );
+	bool Init();
+    bool Update( float fElapsedTime );
+    bool Render();
 
-    HRESULT SetTexture( char *chTexFile, LPDIRECT3DDEVICE8 pd3dDevice );
-    LPDIRECT3DTEXTURE8 &GetTextureObject();
+    bool SetTexture( char *chTexFile);
+    GLuint &GetTextureObject();
 
-    HRESULT RestoreDeviceObjects( LPDIRECT3DDEVICE8 pd3dDevice );
-    HRESULT InvalidateDeviceObjects(void);
-    
-	void RestartParticleSystem(void);
+    void RestartParticleSystem(void);
 
   void ctor();
 private:
 
-    DWORD       m_dwVBOffset;
-    DWORD       m_dwFlush;
-    DWORD       m_dwDiscard;
+    int m_dwVBOffset;
+    int m_dwFlush;
+    int m_dwDiscard;
     Particle   *m_pActiveList;
     Particle   *m_pFreeList;
     Plane      *m_pPlanes;
-	DWORD       m_dwActiveCount;
+	int m_dwActiveCount;
 	float       m_fCurrentTime;
 	float       m_fLastUpdate;
 
     float       m_fMaxPointSize;
     bool        m_bDeviceSupportsPSIZE;
 
-    LPDIRECT3DVERTEXBUFFER8 m_pVB;          // Vertex buffer for point sprites
-    LPDIRECT3DTEXTURE8      m_ptexParticle; // Particle's texture
-    
     // Particle Attributes
-    DWORD       m_dwMaxParticles;
-    DWORD       m_dwNumToRelease;
+    int m_dwMaxParticles;
+    int m_dwNumToRelease;
     float       m_fReleaseInterval;
     float       m_fLifeCycle;
     float       m_fSize;
     HsvColor	m_clrColor;
-    D3DXVECTOR3 m_vPosition;
-    D3DXVECTOR3 m_vVelocity;
-    D3DXVECTOR3 m_vGravity;
-    D3DXVECTOR3 m_vWind;
+    CVector m_vPosition;
+    CVector m_vVelocity;
+    CVector m_vGravity;
+    CVector m_vWind;
     bool        m_bAirResistence;
     float       m_fVelocityVar;
     char       *m_chTexFile;
