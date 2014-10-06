@@ -303,9 +303,8 @@ bool CParticleSystem::Update( float fElpasedTime )
 
             float Kr = pPlane->m_fBounceFactor;
 
-            CVector Vn = DotProduct( pPlane->m_vNormal, 
-                pParticle->m_vCurVel ) * 
-              pPlane->m_vNormal;
+            CVector Vn = pPlane->m_vNormal*DotProduct( pPlane->m_vNormal, 
+                                                       pParticle->m_vCurVel );
             CVector Vt = pParticle->m_vCurVel - Vn;
             CVector Vp = Vt - Kr * Vn;
 
