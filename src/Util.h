@@ -1,5 +1,3 @@
-#include <xtl.h>
-
 //-----------------------------------------------------------------------------
 // Name: getRandomMinMax()
 // Desc: Gets a random number between min/max boundaries
