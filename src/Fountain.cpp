@@ -241,7 +241,8 @@ extern "C" void Render()
   std::cout << "rotation at " << m_pssSettings[m_iCurrSetting].m_fRotationSpeed << std::endl;
   SetupRotation(0.0f, 0.0f, m_fRotation);
   glClearColor(0.0, 0.0, 0.0, 1.0);
-  glClear(GL_COLOR_BUFFER_BIT);
+  glDisable(GL_DEPTH_TEST);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPT_BUFFER_BIT);
 
   //
   // The particle system will need to know how much time has passed since 
