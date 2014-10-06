@@ -527,6 +527,8 @@ bool CParticleSystem::Render()
       pParticle = pParticle->m_pNext;
     }
 
+    glDisable(GL_TEXTURE_2D);
+
     return true;
 }
 
