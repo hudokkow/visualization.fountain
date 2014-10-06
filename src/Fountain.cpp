@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <GL/gl.h>
 #include <GL/glu.h>
+#include "timer.h"
 
 #define	FREQ_DATA_SIZE 1024			// size of frequency data wanted
 #define MAX_BARS 720				// number of bars in the Spectrum
@@ -64,6 +65,7 @@ static float	m_fMinLevel = MIN_LEVEL;
 static float	m_fMaxLevel = MAX_LEVEL;
 
 ADDON::CHelper_libXBMC_addon *XBMC           = NULL;
+CTimer gTimer;
 
 void SetDefaults();
 void SetDefaults(ParticleSystemSettings* settings);
@@ -112,8 +114,6 @@ extern "C" void Start(int iChannels, int iSamplesPerSec, int iBitsPerSample, con
     m_pFreqPrev[i] = 0.0f;
   }
 
-
-
   if (m_bCycleSettings || m_iNumSettings < 3)
     m_iCurrSetting++;
   else
@@ -132,6 +132,7 @@ extern "C" void Start(int iChannels, int iSamplesPerSec, int iBitsPerSample, con
   m_iSDir = 1;
   m_iVDir = 1;
   InitParticleSystem(m_pssSettings[m_iCurrSetting]);
+  gTimer.Init();
 }
 
 
@@ -249,9 +250,8 @@ extern "C" void Render()
   // time has elapsed since the last frame update...
   //
 
-  m_dwCurTime = time(NULL);
-  m_fElapsedTime = (m_dwCurTime - m_dwLastTime)/m_fUpdateSpeed;
-  m_dwLastTime = m_dwCurTime;
+  gTimer.Update();
+  m_fElapsedTime = gTimer.GetDeltaTime();
   std::cout << "fetta di er " << m_fElapsedTime << std::endl;
   m_ParticleSystem.Update( m_fElapsedTime );
 
