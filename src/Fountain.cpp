@@ -7,6 +7,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <xbmc/xbmc_vis_dll.h>
+#include <memory.h>
 #include <time.h>
 #include <algorithm>
 
