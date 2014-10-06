@@ -136,6 +136,7 @@ extern "C" void Start(int iChannels, int iSamplesPerSec, int iBitsPerSample, con
 }
 
 
+#include <iostream>
 extern "C" void AudioData(const float* pAudioData, int iAudioDataLength, float *pFreqData, int iFreqDataLength)
 {
   ParticleSystemSettings *currSettings = &m_pssSettings[m_iCurrSetting];
