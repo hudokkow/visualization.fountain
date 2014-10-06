@@ -511,7 +511,7 @@ bool CParticleSystem::Render()
     {
       CRGBA col = convertHSV2RGB(pParticle->m_clrColor);
       glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, (const GLfloat*)col.col);
-      glLoadIdentity();
+      glPushMatrix();
       glTranslatef(pParticle->m_vCurPos.x, pParticle->m_vCurPos.y, pParticle->m_vCurPos.z);
       glScalef(m_fSize, m_fSize, m_fSize);
       glBegin(GL_TRIANGLES);
@@ -521,6 +521,7 @@ bool CParticleSystem::Render()
         glVertex3f(cvVertices[i].x, cvVertices[i].y, cvVertices[i].z);
       }
       glEnd();
+      glPopMatrix();
       pParticle = pParticle->m_pNext;
     }
 
