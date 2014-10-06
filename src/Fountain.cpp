@@ -80,7 +80,7 @@ ADDON_STATUS ADDON_Create(void* hdl, void* props)
   m_iCurrSetting = -1;
   srand(time(NULL));
 
-  return ADDON_STATUS_NEED_OK;
+  return ADDON_STATUS_OK;
 }
 
 extern "C" void Start(int iChannels, int iSamplesPerSec, int iBitsPerSample, const char* szSongName)
