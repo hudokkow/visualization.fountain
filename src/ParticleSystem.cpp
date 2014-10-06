@@ -8,6 +8,7 @@
 
 #include "ParticleSystem.h"
 #include "Util.h"
+#include <string.h>
 
 const int HBAND = 128;
 const int SBAND = 256;
