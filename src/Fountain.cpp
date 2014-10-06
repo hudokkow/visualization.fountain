@@ -247,26 +247,18 @@ extern "C" void Render()
   // to alpha blend with each other correctly.
   //
 
-  d3dSetRenderState(D3DRS_CULLMODE, false); //D3DCULL_CCW);
-  d3dSetRenderState(D3DRS_LIGHTING, TRUE);
-
-  d3dSetRenderState(D3DRS_ZENABLE, D3DZB_TRUE);
-  d3dSetRenderState( D3DRS_ZWRITEENABLE, FALSE );
-  d3dSetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
-  d3dSetRenderState( D3DRS_DESTBLEND, D3DBLEND_ONE );
+  glDisable(GL_CULL_FACE);
+  glEnable(GL_LIGHTING);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_ONE, GL_ONE);
 
   //
   // Render particle system
   //
 
-  m_ParticleSystem.Render( m_pd3dDevice );
+  m_ParticleSystem.Render();
 }
 
-
-extern "C" void Stop()
-{
-  m_ParticleSystem.dtor();
-}
 
 void CreateArrays()
 {
@@ -603,6 +595,7 @@ extern "C" bool IsLocked()
 //-----------------------------------------------------------------------------
 extern "C" void ADDON_Stop()
 {
+  m_ParticleSystem.dtor();
 }
 
 //-- Destroy ------------------------------------------------------------------
