@@ -219,7 +219,7 @@ extern "C" void Render()
   SetupCamera();
   SetupRotation(0.0f, 0.0f, m_fRotation+=m_pssSettings[m_iCurrSetting].m_fRotationSpeed);
   SetupPerspective();
-  glClearColor(0.0, 0.0, 0.0);
+  glClearColor(0.0, 0.0, 0.0, 1.0);
   glClear(GL_COLOR_BUFFER_BIT);
 
   //
@@ -228,7 +228,7 @@ extern "C" void Render()
   // time has elapsed since the last frame update...
   //
 
-  m_dwCurTime = timeGetTime();
+  m_dwCurTime = time(NULL);
   m_fElapsedTime = (m_dwCurTime - m_dwLastTime)/m_fUpdateSpeed;
   m_dwLastTime = m_dwCurTime;
   m_ParticleSystem.Update( m_fElapsedTime );
