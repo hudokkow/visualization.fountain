@@ -149,7 +149,7 @@ void CParticleSystem::dtor()
 		m_chTexFile = NULL;
 	}
 
-    if( m_texture != NULL )
+    if( m_texture != 0)
       glDeleteTextures(1, &m_texture);
 }
 
