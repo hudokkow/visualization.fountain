@@ -238,8 +238,7 @@ extern "C" void Render()
   // Set up our view
   SetupCamera();
   SetupPerspective();
-  m_fRotation+=m_pssSettings[m_iCurrSetting].m_fRotationSpeed;
-  SetupRotation(0.0f, 0.0f, m_fRotation);
+  SetupRotation(0.0f, 0.0f, m_fRotation+=m_pssSettings[m_iCurrSetting].m_fRotationSpeed);
   glClearColor(0.0, 0.0, 0.0, 1.0);
   glDisable(GL_DEPTH_TEST);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
