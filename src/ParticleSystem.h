@@ -10,6 +10,7 @@
 #define CPARTICLESYSTEM_H_INCLUDED
 
 #include "types.h"
+#include <GL/gl.h>
 
 //-----------------------------------------------------------------------------
 // SYMBOLIC CONSTANTS
@@ -174,7 +175,7 @@ public:
 
   void ctor();
 private:
-
+    GLuint m_texture;
     int m_dwVBOffset;
     int m_dwFlush;
     int m_dwDiscard;

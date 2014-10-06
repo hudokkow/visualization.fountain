@@ -6,18 +6,12 @@
 //					   (particularly in Render) to work as visualisation
 //-----------------------------------------------------------------------------
 
-#include <tchar.h>
 #include "particlesystem.h"
 #include "Util.h"
 
 const int HBAND = 128;
 const int SBAND = 256;
 const int VBAND = 384;
-
-extern "C" void d3dSetTextureStageState( int x, DWORD dwY, DWORD dwZ);
-extern "C" void d3dSetRenderState(DWORD dwY, DWORD dwZ);
-extern "C" void d3dGetRenderState(DWORD dwY, DWORD* dwZ);
-
 
 HsvColor::HsvColor() {}
 
@@ -33,9 +27,9 @@ HsvColor::HsvColor( float hin, float sin, float vin )
 // Desc: Generates a random vector where X,Y, and Z components are between
 //       -1.0 and 1.0
 //-----------------------------------------------------------------------------
-D3DXVECTOR3 getRandomVector()
+CVector getRandomVector()
 {
-	D3DXVECTOR3 vVector;
+  CVector vVector;
     // Pick a random Z between -1.0f and 1.0f.
     vVector.z = getRandomMinMax( -1.0f, 1.0f);
     
@@ -43,23 +37,23 @@ D3DXVECTOR3 getRandomVector()
     float radius = (float)sqrt(1 - vVector.z * vVector.z);
     
     // Pick a random point on a circle.
-    float t = getRandomMinMax( -D3DX_PI, D3DX_PI);
+    float t = getRandomMinMax( -M_PI, M_PI);
 
     // Compute matching X and Y for our Z.
     vVector.x = (float)cosf(t) * radius;
     vVector.y = (float)sinf(t) * radius;
 
-	return vVector;
+    return vVector;
 }
 
 //-----------------------------------------------------------------------------
 // Name : classifyPoint()
 // Desc : Classifies a point against the plane passed
 //-----------------------------------------------------------------------------
-int classifyPoint( D3DXVECTOR3 *vPoint, Plane *pPlane )
+int classifyPoint( CVector *vPoint, Plane *pPlane )
 {
-	D3DXVECTOR3 vDirection = pPlane->m_vPoint - *vPoint;
-	float fResult = D3DXVec3Dot( &vDirection, &pPlane->m_vNormal );
+	CVector vDirection = pPlane->m_vPoint - *vPoint;
+	float fResult = DotProduct(vDirection, pPlane->m_vNormal );
 
 	if( fResult < -0.001f )
         return CP_FRONT;
@@ -97,10 +91,10 @@ void CParticleSystem::ctor()
     m_fLifeCycle       = 1.0f;
     m_fSize            = 1.0f;
     m_clrColor         = HsvColor(0.0f,1.0f,0.6f);
-    m_vPosition        = D3DXVECTOR3(0.0f,0.0f,0.0f);
-    m_vVelocity        = D3DXVECTOR3(0.0f,0.0f,0.0f);
-    m_vGravity         = D3DXVECTOR3(0.0f,0.0f,0.0f);
-    m_vWind            = D3DXVECTOR3(0.0f,0.0f,0.0f);
+    m_vPosition        = CVector(0.0f,0.0f,0.0f);
+    m_vVelocity        = CVector(0.0f,0.0f,0.0f);
+    m_vGravity         = CVector(0.0f,0.0f,0.0f);
+    m_vWind            = CVector(0.0f,0.0f,0.0f);
     m_bAirResistence   = true;
     m_fVelocityVar     = 1.0f;
 
@@ -166,49 +160,36 @@ void CParticleSystem::dtor()
 // Name: SetTexture()
 // Desc: 
 //-----------------------------------------------------------------------------
-HRESULT CParticleSystem::SetTexture( char *chTexFile, LPDIRECT3DDEVICE8 pd3dDevice )
+bool CParticleSystem::SetTexture( char *chTexFile)
 {
     // Deallocate the memory that was previously reserved for this string.
-	if( m_chTexFile != NULL )
-	{
-		free(m_chTexFile);
-		m_chTexFile = NULL;
-	}
+  if( m_chTexFile != NULL )
+  {
+    free(m_chTexFile);
+    m_chTexFile = NULL;
+  }
     
-    // Dynamically allocate the correct amount of memory.
-    m_chTexFile = (char*)malloc( strlen( chTexFile ) + 1);
+  // Dynamically allocate the correct amount of memory.
+  m_chTexFile = (char*)malloc( strlen( chTexFile ) + 1);
 
-    // If the allocation succeeds, copy the initialization string.
-    if( m_chTexFile != NULL )
-		strcpy( m_chTexFile, chTexFile );
+  // If the allocation succeeds, copy the initialization string.
+  if( m_chTexFile != NULL )
+    strcpy( m_chTexFile, chTexFile );
 
-    if( m_ptexParticle != NULL )
-        m_ptexParticle->Release();
-	m_ptexParticle = NULL;
+  if( m_ptexParticle != NULL )
+    m_ptexParticle->Release();
+  m_ptexParticle = NULL;
 
-	// Load Texture Map for particles
-	if( FAILED( D3DXCreateTextureFromFile( pd3dDevice, m_chTexFile, &m_ptexParticle ) ) )
-	{        
-		return E_FAIL;
-	}
+  m_texture = SOIL_load_OGL_texture(m_chTexFile, SOIL_LOAD_RGBA, 0, 0);
 
-	return S_OK;
-}
-
-//-----------------------------------------------------------------------------
-// Name: GetTextureObject()
-// Desc: 
-//-----------------------------------------------------------------------------
-LPDIRECT3DTEXTURE8 &CParticleSystem::GetTextureObject()
-{
-	return m_ptexParticle;
+  return m_texture != 0;
 }
 
 //-----------------------------------------------------------------------------
 // Name: SetCollisionPlane()
 // Desc: 
 //-----------------------------------------------------------------------------
-void CParticleSystem::SetCollisionPlane( D3DXVECTOR3 vPlaneNormal, D3DXVECTOR3 vPoint, 
+void CParticleSystem::SetCollisionPlane( CVector vPlaneNormal, CVector vPoint, 
                                          float fBounceFactor, int nCollisionResult )
 {
     Plane *pPlane = (Plane*)malloc(sizeof (Plane));
@@ -227,99 +208,79 @@ void CParticleSystem::SetCollisionPlane( D3DXVECTOR3 vPlaneNormal, D3DXVECTOR3 v
 // Name: Init()
 // Desc: 
 //-----------------------------------------------------------------------------
-HRESULT CParticleSystem::Init( LPDIRECT3DDEVICE8 pd3dDevice )
+bool CParticleSystem::Init()
 {
-    HRESULT hr;
-
-    // Initialize the particle system
-    if( FAILED( hr = RestoreDeviceObjects( pd3dDevice ) ) )
-        return hr;
-
     // Get max point size
-    D3DCAPS8 d3dCaps;
-    pd3dDevice->GetDeviceCaps( &d3dCaps );
-    m_fMaxPointSize = d3dCaps.MaxPointSize;
+    m_fMaxPointSize = 63; // TODO?
 
-    // Check and see if we can change the size of point sprites 
-    // in hardware by sending D3DFVF_PSIZE with the FVF.
+    m_bDeviceSupportsPSIZE = false;
 
-    if( d3dCaps.FVFCaps & D3DFVFCAPS_PSIZE )
-        m_bDeviceSupportsPSIZE = true;
-    else
-        m_bDeviceSupportsPSIZE = false;
-
-    // Load Texture Map for particles
-	if( FAILED( D3DXCreateTextureFromFile( pd3dDevice, m_chTexFile, &m_ptexParticle ) ) )
-	{        
-		return E_FAIL;
-	}
-
-	return S_OK;
+    return true;
 }
 
 //-----------------------------------------------------------------------------
 // Name: Update()
 // Desc:
 //-----------------------------------------------------------------------------
-HRESULT CParticleSystem::Update( FLOAT fElpasedTime )
+bool CParticleSystem::Update( float fElpasedTime )
 {
-    Particle  *pParticle;
-    Particle **ppParticle;
-    Plane     *pPlane;
-    Plane    **ppPlane;
-    D3DXVECTOR3 vOldPosition;
+  Particle  *pParticle;
+  Particle **ppParticle;
+  Plane     *pPlane;
+  Plane    **ppPlane;
+  CVector vOldPosition;
 
-    m_fCurrentTime += fElpasedTime;     // Update our particle system timer...
+  m_fCurrentTime += fElpasedTime;     // Update our particle system timer...
 
-    ppParticle = &m_pActiveList; // Start at the head of the active list
+  ppParticle = &m_pActiveList; // Start at the head of the active list
 
-	while( *ppParticle )
+  while( *ppParticle )
+  {
+    pParticle = *ppParticle; // Set a pointer to the head
+
+    // Calculate new position
+    float fTimePassed  = m_fCurrentTime - pParticle->m_fInitTime;
+
+    if( fTimePassed >= pParticle->m_fLifeCycle )
     {
-        pParticle = *ppParticle; // Set a pointer to the head
+      // Time is up, put the particle back on the free list...
+      *ppParticle = pParticle->m_pNext;
+      pParticle->m_pNext = m_pFreeList;
+      m_pFreeList = pParticle;
 
-        // Calculate new position
-        float fTimePassed  = m_fCurrentTime - pParticle->m_fInitTime;
+      --m_dwActiveCount;
+    }
+    else
+    {
+      // Update particle position and velocity
 
-		if( fTimePassed >= pParticle->m_fLifeCycle )
+      // Update velocity with respect to Gravity (Constant Accelaration)
+      pParticle->m_vCurVel += pParticle->m_vGravity * fElpasedTime;
+
+      // Update velocity with respect to Wind (Accelaration based on 
+      // difference of vectors)
+      if( pParticle->m_bAirResistence == true )
+        pParticle->m_vCurVel += (pParticle->m_vWind - pParticle->m_vCurVel) * fElpasedTime;
+
+      // Finally, update position with respect to velocity
+      vOldPosition = pParticle->m_vCurPos;
+      pParticle->m_vCurPos += pParticle->m_vCurVel * fElpasedTime;
+
+      //-----------------------------------------------------------------
+      // BEGIN Checking the particle against each plane that was set up
+
+      ppPlane = &m_pPlanes; // Set a pointer to the head
+
+      while( *ppPlane )
+      {
+        pPlane = *ppPlane;
+        int result = classifyPoint( &pParticle->m_vCurPos, pPlane );
+
+        if( result == CP_BACK /*|| result == CP_ONPLANE */ )
         {
-            // Time is up, put the particle back on the free list...
-            *ppParticle = pParticle->m_pNext;
-            pParticle->m_pNext = m_pFreeList;
-            m_pFreeList = pParticle;
-
-            --m_dwActiveCount;
-        }
-        else
-        {
-            // Update particle position and velocity
-
-            // Update velocity with respect to Gravity (Constant Accelaration)
-            pParticle->m_vCurVel += pParticle->m_vGravity * fElpasedTime;
-
-            // Update velocity with respect to Wind (Accelaration based on 
-            // difference of vectors)
-            if( pParticle->m_bAirResistence == true )
-                pParticle->m_vCurVel += (pParticle->m_vWind - pParticle->m_vCurVel) * fElpasedTime;
-
-            // Finally, update position with respect to velocity
-            vOldPosition = pParticle->m_vCurPos;
-            pParticle->m_vCurPos += pParticle->m_vCurVel * fElpasedTime;
-
-            //-----------------------------------------------------------------
-            // BEGIN Checking the particle against each plane that was set up
-
-            ppPlane = &m_pPlanes; // Set a pointer to the head
-
-            while( *ppPlane )
-            {
-                pPlane = *ppPlane;
-                int result = classifyPoint( &pParticle->m_vCurPos, pPlane );
-
-                if( result == CP_BACK /*|| result == CP_ONPLANE */ )
-                {
-                    if( pPlane->m_nCollisionResult == CR_BOUNCE )
-                    {
-                        pParticle->m_vCurPos = vOldPosition;
+          if( pPlane->m_nCollisionResult == CR_BOUNCE )
+          {
+            pParticle->m_vCurPos = vOldPosition;
 
             //-----------------------------------------------------------------
             //
@@ -342,148 +303,148 @@ HRESULT CParticleSystem::Update( FLOAT fElpasedTime )
             //
             //-----------------------------------------------------------------
 
-                        float Kr = pPlane->m_fBounceFactor;
+            float Kr = pPlane->m_fBounceFactor;
 
-                        D3DXVECTOR3 Vn = D3DXVec3Dot( &pPlane->m_vNormal, 
-                                                      &pParticle->m_vCurVel ) * 
-                                                      pPlane->m_vNormal;
-                        D3DXVECTOR3 Vt = pParticle->m_vCurVel - Vn;
-                        D3DXVECTOR3 Vp = Vt - Kr * Vn;
+            CVector Vn = DotProduct( pPlane->m_vNormal, 
+                pParticle->m_vCurVel ) * 
+              pPlane->m_vNormal;
+            CVector Vt = pParticle->m_vCurVel - Vn;
+            CVector Vp = Vt - Kr * Vn;
 
-                        pParticle->m_vCurVel = Vp;
-                    }
-                    else if( pPlane->m_nCollisionResult == CR_RECYCLE )
-                    {
-                        pParticle->m_fInitTime -= pParticle->m_fLifeCycle;
-                    }
+            pParticle->m_vCurVel = Vp;
+          }
+          else if( pPlane->m_nCollisionResult == CR_RECYCLE )
+          {
+            pParticle->m_fInitTime -= pParticle->m_fLifeCycle;
+          }
 
-                    else if( pPlane->m_nCollisionResult == CR_STICK )
-                    {
-                        pParticle->m_vCurPos = vOldPosition;
-                        pParticle->m_vCurVel = D3DXVECTOR3(0.0f,0.0f,0.0f);
-                    }
-                }
-
-                ppPlane = &pPlane->m_pNext;
-            }
-
-            // END Plane Checking
-            //-----------------------------------------------------------------
-
-            ppParticle = &pParticle->m_pNext;
+          else if( pPlane->m_nCollisionResult == CR_STICK )
+          {
+            pParticle->m_vCurPos = vOldPosition;
+            pParticle->m_vCurVel = CVector(0.0f,0.0f,0.0f);
+          }
         }
+
+        ppPlane = &pPlane->m_pNext;
+      }
+
+      // END Plane Checking
+      //-----------------------------------------------------------------
+
+      ppParticle = &pParticle->m_pNext;
     }
+  }
 
-    //-------------------------------------------------------------------------
-    // Emit new particles in accordance to the flow rate...
-    // 
-    // NOTE: The system operates with a finite number of particles.
-    //       New particles will be created until the max amount has
-    //       been reached, after that, only old particles that have
-    //       been recycled can be reintialized and used again.
-    //-------------------------------------------------------------------------
+  //-------------------------------------------------------------------------
+  // Emit new particles in accordance to the flow rate...
+  // 
+  // NOTE: The system operates with a finite number of particles.
+  //       New particles will be created until the max amount has
+  //       been reached, after that, only old particles that have
+  //       been recycled can be reintialized and used again.
+  //-------------------------------------------------------------------------
 
-    if( m_fCurrentTime - m_fLastUpdate > m_fReleaseInterval )
+  if( m_fCurrentTime - m_fLastUpdate > m_fReleaseInterval )
+  {
+    // Reset update timing...
+    m_fLastUpdate = m_fCurrentTime;
+
+    // Emit new particles at specified flow rate...
+    for( int i = 0; i < m_dwNumToRelease; ++i )
     {
-        // Reset update timing...
-        m_fLastUpdate = m_fCurrentTime;
-    
-        // Emit new particles at specified flow rate...
-        for( DWORD i = 0; i < m_dwNumToRelease; ++i )
+      // Do we have any free particles to put back to work?
+      if( m_pFreeList )
+      {
+        // If so, hand over the first free one to be reused.
+        pParticle = m_pFreeList;
+        // Then make the next free particle in the list next to go!
+        m_pFreeList = pParticle->m_pNext;
+      }
+      else
+      {
+        // There are no free particles to recycle...
+        // We'll have to create a new one from scratch!
+        if( m_dwActiveCount < m_dwMaxParticles )
         {
-            // Do we have any free particles to put back to work?
-            if( m_pFreeList )
-            {
-                // If so, hand over the first free one to be reused.
-                pParticle = m_pFreeList;
-                // Then make the next free particle in the list next to go!
-                m_pFreeList = pParticle->m_pNext;
-            }
-            else
-            {
-                // There are no free particles to recycle...
-                // We'll have to create a new one from scratch!
-                if( m_dwActiveCount < m_dwMaxParticles )
-                {
-                    if( NULL == ( pParticle = (Particle*)malloc( sizeof(Particle)) ) )
-                    {
-                        return E_OUTOFMEMORY;
-                    }
-                    memset(pParticle ,0,sizeof(Particle) );
-                }
-            }
-
-            if( m_dwActiveCount < m_dwMaxParticles )
-            {
-                pParticle->m_pNext = m_pActiveList; // Make it the new head...
-                m_pActiveList = pParticle;
-                
-                // Set the attributes for our new particle...
-                pParticle->m_vCurVel = m_vVelocity;
-
-                if( m_fVelocityVar != 0.0f )
-                {
-                    D3DXVECTOR3 vRandomVec = getRandomVector();
-                    pParticle->m_vCurVel += vRandomVec * m_fVelocityVar;
-                }
-
-                pParticle->m_fInitTime  = m_fCurrentTime;
-                pParticle->m_vCurPos    = m_vPosition;
-				
-				//modifiy h by m_fHMod
-				float h = m_clrColor.h;
-				if (m_fHVar > 0)
-				{
-					h = getRandomMinMax(-1.0f, 1.0f) * m_fHVar;
-					h+=m_clrColor.h;
-
-					while (h > 360.0f)	h -= 360.0f;
-					while (h < 0)		h += 360.0f;
-
-					h = max(m_fMinH, min(m_fMaxH, h));
-				}
-				
-				//modifiy s by m_fSMod
-				float s = m_clrColor.s;
-				if (m_fSVar > 0)
-				{
-					s = getRandomMinMax(-1.0f, 1.0f) * m_fSVar;
-					s+=m_clrColor.s;
-
-					while (s > 1.0f) s-= 1.0f;
-					while (s < 0.0f) s+= 1.0f;
-					
-					s = max(m_fMinS, min(m_fMaxS, s));
-				}
-
-				//modifiy v by m_fVMod
-				float v = m_clrColor.v;
-				if (m_fVVar > 0)
-				{
-					v = getRandomMinMax(-1.0f, 1.0f) * m_fVVar;
-					v+=m_clrColor.v;
-					
-					while (v > 1.0f) v-= 1.0f;
-					while (v < 1.0f) v+= 1.0f;
-					
-					v = max(m_fMinV, min(m_fMaxV, v));
-				}
-
-				pParticle->m_clrColor	= HsvColor(h, s, v);
-
-				pParticle->m_vGravity	= m_vGravity;
-				pParticle->m_vWind		= m_vWind;
-				pParticle->m_fVelocityVar = m_fVelocityVar;
-				pParticle->m_fSize		= m_fSize;
-				pParticle->m_fLifeCycle	= m_fLifeCycle;
-				pParticle->m_bAirResistence = m_bAirResistence;
-                
-                ++m_dwActiveCount;
-            }
+          if( NULL == ( pParticle = (Particle*)malloc( sizeof(Particle)) ) )
+          {
+            return false;
+          }
+          memset(pParticle ,0,sizeof(Particle) );
         }
-    }
+      }
 
-    return S_OK;
+      if( m_dwActiveCount < m_dwMaxParticles )
+      {
+        pParticle->m_pNext = m_pActiveList; // Make it the new head...
+        m_pActiveList = pParticle;
+
+        // Set the attributes for our new particle...
+        pParticle->m_vCurVel = m_vVelocity;
+
+        if( m_fVelocityVar != 0.0f )
+        {
+          CVector vRandomVec = getRandomVector();
+          pParticle->m_vCurVel += vRandomVec * m_fVelocityVar;
+        }
+
+        pParticle->m_fInitTime  = m_fCurrentTime;
+        pParticle->m_vCurPos    = m_vPosition;
+
+        //modifiy h by m_fHMod
+        float h = m_clrColor.h;
+        if (m_fHVar > 0)
+        {
+          h = getRandomMinMax(-1.0f, 1.0f) * m_fHVar;
+          h+=m_clrColor.h;
+
+          while (h > 360.0f)	h -= 360.0f;
+          while (h < 0)		h += 360.0f;
+
+          h = std::max(m_fMinH, min(m_fMaxH, h));
+        }
+
+        //modifiy s by m_fSMod
+        float s = m_clrColor.s;
+        if (m_fSVar > 0)
+        {
+          s = getRandomMinMax(-1.0f, 1.0f) * m_fSVar;
+          s+=m_clrColor.s;
+
+          while (s > 1.0f) s-= 1.0f;
+          while (s < 0.0f) s+= 1.0f;
+
+          s = std::max(m_fMinS, min(m_fMaxS, s));
+        }
+
+        //modifiy v by m_fVMod
+        float v = m_clrColor.v;
+        if (m_fVVar > 0)
+        {
+          v = getRandomMinMax(-1.0f, 1.0f) * m_fVVar;
+          v+=m_clrColor.v;
+
+          while (v > 1.0f) v-= 1.0f;
+          while (v < 1.0f) v+= 1.0f;
+
+          v = std::max(m_fMinV, min(m_fMaxV, v));
+        }
+
+        pParticle->m_clrColor	= HsvColor(h, s, v);
+
+        pParticle->m_vGravity	= m_vGravity;
+        pParticle->m_vWind		= m_vWind;
+        pParticle->m_fVelocityVar = m_fVelocityVar;
+        pParticle->m_fSize		= m_fSize;
+        pParticle->m_fLifeCycle	= m_fLifeCycle;
+        pParticle->m_bAirResistence = m_bAirResistence;
+
+        ++m_dwActiveCount;
+      }
+    }
+  }
+
+  return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -492,22 +453,22 @@ HRESULT CParticleSystem::Update( FLOAT fElpasedTime )
 //-----------------------------------------------------------------------------
 void CParticleSystem::RestartParticleSystem( void )
 {
-	Particle  *pParticle;
-	Particle **ppParticle;
+  Particle  *pParticle;
+  Particle **ppParticle;
 
-	ppParticle = &m_pActiveList; // Start at the head of the active list
+  ppParticle = &m_pActiveList; // Start at the head of the active list
 
-	while( *ppParticle )
-	{
-		pParticle = *ppParticle; // Set a pointer to the head
+  while( *ppParticle )
+  {
+    pParticle = *ppParticle; // Set a pointer to the head
 
-		// Put the particle back on the free list...
-		*ppParticle = pParticle->m_pNext;
-		pParticle->m_pNext = m_pFreeList;
-		m_pFreeList = pParticle;
+    // Put the particle back on the free list...
+    *ppParticle = pParticle->m_pNext;
+    pParticle->m_pNext = m_pFreeList;
+    m_pFreeList = pParticle;
 
-		--m_dwActiveCount;
-	}
+    --m_dwActiveCount;
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -517,171 +478,69 @@ void CParticleSystem::RestartParticleSystem( void )
 //		 the original Render method, so I have heavily rewritten it to not
 //		 user point sprites
 //-----------------------------------------------------------------------------
-HRESULT CParticleSystem::Render( LPDIRECT3DDEVICE8 pd3dDevice )
+bool CParticleSystem::Render()
 {
-	DWORD rsAmbient, rsLighting;
-	d3dGetRenderState(D3DRS_LIGHTING, &rsLighting);
-	d3dGetRenderState(D3DRS_AMBIENT, &rsAmbient);
-
-	d3dSetRenderState(D3DRS_LIGHTING, TRUE);
-
-	IDirect3DVertexBuffer8* pVertexBuffer = NULL; // Vertices Buffer
-	IDirect3DTexture8* pTexture = NULL;
-
-    VOID* pVertices;
+    CUSTOMVERTEX* pVertices;
 
     struct CUSTOMVERTEX
-	{
-		FLOAT x, y, z; // The transformed position for the vertex.
-		FLOAT tu, tv;  // The vertex texture coordinates
-	};
-
-	DWORD D3DFVF_CUSTOMVERTEX = (D3DFVF_XYZ|D3DFVF_TEX1);
-
+    {
+      float x, y, z; // The transformed position for the vertex.
+      float tu, tv;  // The vertex texture coordinates
+    };
 
     //Store each point of the triangle together with it's colour
     CUSTOMVERTEX cvVertices[] =
     {
-        { -1.0f, -1.0f, 0.0f    ,0.0f, 1.0f }, // x, y, z, textures (tu, tv) 
-		{ -1.0f,  1.0f, 0.0f    ,0.0f, 0.0f }, 
-		{  1.0f,  1.0f, 0.0f    ,1.0f, 0.0f },
+      { -1.0f, -1.0f, 0.0f    ,0.0f, 1.0f }, // x, y, z, textures (tu, tv) 
+      { -1.0f,  1.0f, 0.0f    ,0.0f, 0.0f }, 
+      {  1.0f,  1.0f, 0.0f    ,1.0f, 0.0f },
 
-		{ -1.0f, -1.0f, 0.0f    ,0.0f, 1.0f },
-		{  1.0f,  1.0f, 0.0f    ,1.0f, 0.0f },
-		{  1.0f, -1.0f, 0.0f    ,1.0f, 1.0f }
+      { -1.0f, -1.0f, 0.0f    ,0.0f, 1.0f },
+      {  1.0f,  1.0f, 0.0f    ,1.0f, 0.0f },
+      {  1.0f, -1.0f, 0.0f    ,1.0f, 1.0f }
 
     };
 
-	D3DMATERIAL8 mtrl;
-	ZeroMemory( &mtrl, sizeof(D3DMATERIAL8) );;
-	mtrl.Ambient = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-  mtrl.Diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-  mtrl.Emissive = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-  mtrl.Power = 0.0f;
-  mtrl.Specular = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-  pd3dDevice->SetMaterial( &mtrl );
+    const GLfloat dif[] = {1.0, 1.0, 1.0, 1.0};
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, dif);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, dif);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, dif);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, dif);
 
-    //Create the vertex buffer from our device
-    pd3dDevice->CreateVertexBuffer(6 * sizeof(CUSTOMVERTEX),
-                                               0, 
-											   D3DFVF_CUSTOMVERTEX,
-                                               D3DPOOL_DEFAULT, 
-											   &pVertexBuffer);
-
-    //Get a pointer to the vertex buffer vertices and lock the vertex buffer
-    pVertexBuffer->Lock(0, sizeof(cvVertices), (BYTE**)&pVertices, 0);
-
-    //Copy our stored vertices values into the vertex buffer
-    memcpy(pVertices, cvVertices, sizeof(cvVertices));
-
-    //Unlock the vertex buffer
-    pVertexBuffer->Unlock();
-
-	//Rendering our triangle
-    pd3dDevice->SetStreamSource(0, pVertexBuffer, sizeof(CUSTOMVERTEX));
-    pd3dDevice->SetVertexShader(D3DFVF_CUSTOMVERTEX);
-	pd3dDevice->SetTexture(0, m_ptexParticle);
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, m_texture);
 
     Particle    *pParticle = m_pActiveList;
-	D3DXMATRIX matWorld;
-	D3DXMATRIX matPos;
-	while( pParticle )
-	{
-		mtrl.Emissive = convertHSV2RGB(pParticle->m_clrColor);
-		pd3dDevice->SetMaterial( &mtrl );
-
-		D3DXVECTOR3 pPos = pParticle->m_vCurPos;
-		D3DXMatrixTranslation(&matPos, pPos.x, pPos.y, pPos.z);
-		D3DXMatrixScaling(&matWorld, m_fSize, m_fSize, m_fSize);
-		matWorld = matWorld * matPos;
-		pd3dDevice->SetTransform(D3DTS_WORLD, &matWorld);
-		pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
-		pParticle = pParticle->m_pNext;
-	}
-	pVertexBuffer->Release();
-
-	//pd3dDevice->Present( NULL, NULL, NULL, NULL );
-	
-	//reset render states
-	//d3dSetRenderState(D3DRS_AMBIENT, rsAmbient);
-	//d3dSetRenderState(D3DRS_LIGHTING, rsLighting);
-
-	return S_OK;
-}
-
-//-----------------------------------------------------------------------------
-// Name: RestoreDeviceObjects()
-// Desc:
-// Note: If your application performs its own vertex processing and passes 
-//       transformed, lit, and clipped vertices to rendering methods, then the 
-//       application can directly write vertices to a vertex buffer allocated  
-//       in driver-optimal memory. This technique prevents a redundant copy  
-//       operation later. Note that this technique will not work well if your 
-//       application reads data back from a vertex buffer, because read 
-//       operations done by the host from driver-optimal memory can be very 
-//       slow. Therefore, if your application needs to read during processing 
-//       or writes data to the buffer erratically, a system-memory vertex 
-//       buffer is a better choice.
-//
-//       When using the Direct3D vertex processing features (by passing 
-//       untransformed vertices to vertex-buffer rendering methods), processing 
-//       can occur in either hardware or software depending on the device type  
-//       and device creation flags. It is recommended that vertex buffers be 
-//       allocated in pool D3DPOOL_DEFAULT for best performance in virtually 
-//       all cases. When a device is using hardware vertex processing, there 
-//       is a number of additional optimizations that may be done based on the 
-///      flags  D3DUSAGE_DYNAMIC and D3DUSAGE_WRITEONLY. 
-//       See IDirect3DDevice8::CreateVertexBuffer for more information on 
-//       using these flags.
-//-----------------------------------------------------------------------------
-HRESULT CParticleSystem::RestoreDeviceObjects( LPDIRECT3DDEVICE8 pd3dDevice )
-{
-    HRESULT hr;
-
-    // Create a vertex buffer for the particle system.  The size of this buffer
-    // does not relate to the number of particles that exist.  Rather, the
-    // buffer is used as a communication channel with the device. we fill in 
-    // a chunck, and tell the device to draw. While the device is drawing, we
-    // fill in the next chunck using NOOVERWRITE. We continue doing this until 
-    // we run out of vertex buffer space, and are forced to DISCARD the buffer
-    // and start over at the beginning.
-
-    if( FAILED( hr = pd3dDevice->CreateVertexBuffer( 
-        m_dwDiscard * sizeof(PointVertex), 
-        D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY | D3DUSAGE_POINTS, 
-        PointVertex::FVF_Flags, // Our custom FVF
-        D3DPOOL_DEFAULT, 
-        &m_pVB )))
+    while (pParticle)
     {
-        return E_FAIL;
+      CRGBA col = convertHSV2RGB(pParticle->m_clrColor);
+      glMaterialfv(GL_EMISSION, (const GLfloat*)col.col);
+      glLoadIdentity();
+      glTranslate(pParticle->m_vCurPos.x, pParticlar->m_vCurPos.y, pParticle->m_vCurPos.z);
+      glScalef(m_fSize, m_fSize, m_fSize);
+      glBegin(GL_TRIANGLES);
+      for (size_t i=0;i<6;++i)
+      {
+        glTexCoord2f(cvVertices[i].tu, cvVertices[i].tv);
+        glVertex3f(cvVertices[i].x, cvVertices[i].y, cvVertices[i].z);
+      }
+      glEnd();
+      pParticle = pParticle->m_pNext;
     }
 
-    return S_OK;
+    return true;
 }
-
-//-----------------------------------------------------------------------------
-// Name: InvalidateDeviceObjects()
-// Desc:
-//-----------------------------------------------------------------------------
-HRESULT CParticleSystem::InvalidateDeviceObjects()
-{
-	if( m_pVB != NULL )
-        m_pVB->Release();
-
-    return S_OK;
-}
-
 
 //-----------------------------------------------------------------------------
 // Name: convertHSV2RGB()
 // Desc: converts an hsv color to rgb. all values should be specified in the range 0.0f - 1.0f
 //-----------------------------------------------------------------------------
 
-D3DXCOLOR convertHSV2RGB(HsvColor hsvColor)
+CRGBA convertHSV2RGB(HsvColor hsvColor)
 {
 	float r, g, b;
 	convertHSV2RGB(hsvColor.h, hsvColor.s, hsvColor.v, &r, &g, &b);
-	return D3DXCOLOR(r, g, b, 1.0f);
+	return CRGBA(r, g, b, 1.0f);
 }
 
 void convertHSV2RGB(float h,float s,float v,float *r,float *g,float *b)
@@ -720,39 +579,39 @@ void convertHSV2RGB(float h,float s,float v,float *r,float *g,float *b)
 }
 
 // Convert RGB to HSV
-HsvColor convertRGB2HSV(D3DXCOLOR d3dColor)
+HsvColor convertRGB2HSV(const CRGBA& d3dColor)
 {
-	float h, s, v;
-	convertRGB2HSV(d3dColor.r, d3dColor.g, d3dColor.b, &h, &s, &v);
-	HsvColor result;
-	result.h = h;
-	result.s = s;
-	result.v = v;
-	return result;
+  float h, s, v;
+  convertRGB2HSV(d3dColor.r, d3dColor.g, d3dColor.b, &h, &s, &v);
+  HsvColor result;
+  result.h = h;
+  result.s = s;
+  result.v = v;
+  return result;
 }
 
 void convertRGB2HSV(float r, float g, float b, float *h, float *s, float *v)
 {
-	float min, max, delta;
-	min = min( r, g, b );
-	max = max( r, g, b );
-	*v = max;				// v
-	delta = max - min;
-	if( max != 0 )
-		*s = delta / max;		// s
-	else {
-		// r = g = b = 0		// s = 0, v is undefined
-		*s = 0;
-		*h = -1;
-		return;
-	}
-	if( r == max )
-		*h = ( g - b ) / delta;		// between yellow & magenta
-	else if( g == max )
-		*h = 2 + ( b - r ) / delta;	// between cyan & yellow
-	else
-		*h = 4 + ( r - g ) / delta;	// between magenta & cyan
-	*h *= 60;				// degrees
-	if( *h < 0 )
-		*h += 360;
+  float min, max, delta;
+  min = min( r, g, b );
+  max = max( r, g, b );
+  *v = max;				// v
+  delta = max - min;
+  if( max != 0 )
+    *s = delta / max;		// s
+  else {
+    // r = g = b = 0		// s = 0, v is undefined
+    *s = 0;
+    *h = -1;
+    return;
+  }
+  if( r == max )
+    *h = ( g - b ) / delta;		// between yellow & magenta
+  else if( g == max )
+    *h = 2 + ( b - r ) / delta;	// between cyan & yellow
+  else
+    *h = 4 + ( r - g ) / delta;	// between magenta & cyan
+  *h *= 60;				// degrees
+  if( *h < 0 )
+    *h += 360;
 }

@@ -466,9 +466,10 @@ void InitParticleSystem(ParticleSystemSettings settings)
   m_ParticleSystem.SetMinV			( settings.m_csValue.min );
   m_ParticleSystem.SetVVar			( settings.m_csValue.variation );
 
-  XBMC->GetSetting("__addonpath__", settings.m_chTexFile);
-  strcat(settings.m_chTexFile, "/resources/particle.bmp");
-  m_ParticleSystem.SetTexture(settings.m_chTexFile);
+  char tmp[1024];
+  XBMC->GetSetting("__addonpath__", tmp);
+  strcat(tmp, "/resources/particle.bmp");
+  m_ParticleSystem.SetTexture(tmp);
 }
 
 CVector Shift(EffectSettings* settings)
