@@ -505,9 +505,9 @@ CVector Shift(EffectSettings* settings)
   }
   else
   {
-    x = max(1, (m_pFreq[xBand] + abs(m_pFreq[xBand] - m_pFreqPrev[xBand]))/MAX_LEVEL);
-    y = max(1, (m_pFreq[yBand] + abs(m_pFreq[yBand] - m_pFreqPrev[yBand]))/MAX_LEVEL);
-    z = max(1, (m_pFreq[zBand] + abs(m_pFreq[zBand] - m_pFreqPrev[zBand]))/MAX_LEVEL);
+    x = std::max(1, (m_pFreq[xBand] + abs(m_pFreq[xBand] - m_pFreqPrev[xBand]))/MAX_LEVEL);
+    y = std::max(1, (m_pFreq[yBand] + abs(m_pFreq[yBand] - m_pFreqPrev[yBand]))/MAX_LEVEL);
+    z = std::max(1, (m_pFreq[zBand] + abs(m_pFreq[zBand] - m_pFreqPrev[zBand]))/MAX_LEVEL);
   }
 
   if (settings->bInvert)
