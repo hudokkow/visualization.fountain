@@ -275,7 +275,7 @@ void SetDefaults()
 void SetDefaults(ParticleSystemSettings* settings)
 {
   settings->m_bAirResistence		= true;
-  settings->m_chTexFile			= szDefaultTexFile;
+  settings->m_chTexFile			= (char*)szDefaultTexFile;
   settings->m_hsvColor			= HsvColor(0.0f, 1.0f, 0.6f);
   settings->m_dwNumToRelease		= 2;
   settings->m_fNumToReleaseMod	= 0.0f;
