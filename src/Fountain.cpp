@@ -139,6 +139,7 @@ extern "C" void Start(int iChannels, int iSamplesPerSec, int iBitsPerSample, con
 extern "C" void AudioData(const float* pAudioData, int iAudioDataLength, float *pFreqData, int iFreqDataLength)
 {
   ParticleSystemSettings *currSettings = &m_pssSettings[m_iCurrSetting];
+  std::cout << "audiodata fed" << std::endl;
 
   if (iFreqDataLength>FREQ_DATA_SIZE)
     iFreqDataLength = FREQ_DATA_SIZE;
@@ -357,7 +358,7 @@ void SetupCamera()
 {
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-  gluLookAt(0.0, 0.0,  30.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+  gluLookAt(0.0, 0.0, -30.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 
 }
 
